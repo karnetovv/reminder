@@ -1,4 +1,6 @@
 package cos.corp.dto;
 
-public class ReminderUpdateReqDto {
+public record ReminderUpdateReqDto (
+
+) {
 }

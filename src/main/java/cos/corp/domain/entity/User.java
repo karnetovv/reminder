@@ -4,52 +4,57 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name ="users")
+@Table(name="users")
 public class User {
-    @GeneratedValue
-    @Id
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(name="external_id", nullable=false, unique=true, length=128)
+    private String externalId;
+
+    @Column(nullable=false, unique=true, length=128)
     private String username;
 
-    @Column(nullable = false)
-    private String password;
-
-    @Column(unique = true,nullable = false)
+    @Column(nullable=false, unique=true, length=255)
     private String email;
 
-    @Column(name = "telegram_id", unique = true)
+    @Column(name="telegram_id", unique=true, length=64)
     private String telegramId;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
+    @Column(name="created_at", nullable=false, updatable=false)
+    private Instant createdAt = Instant.now();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reminder> reminders;
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<Reminder> reminders = new ArrayList<>();
 
-    public User() {}
-
-    public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
+    public User() {
     }
 
-    public User(Long id, String username, String password, String email, String telegramId) {
-        this.id = id;
+    public User(String externalId, String username, String email, String telegramId) {
+        this.externalId = externalId;
         this.username = username;
-        this.password = password;
         this.email = email;
         this.telegramId = telegramId;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public String getUsername() {
@@ -60,12 +65,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getTelegramId() {
@@ -76,19 +81,27 @@ public class User {
         this.telegramId = telegramId;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Date getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Reminder> getReminders() {
+        return reminders;
+    }
+
+    public void setReminders(List<Reminder> reminders) {
+        this.reminders = reminders;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

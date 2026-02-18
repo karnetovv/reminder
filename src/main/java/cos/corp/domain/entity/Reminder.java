@@ -31,6 +31,9 @@ public class Reminder {
     @Column(name ="created_at",nullable = false)
     private Date createdAt;
 
+    @Column(name = "remind_status",nullable = false)
+    private String remindStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

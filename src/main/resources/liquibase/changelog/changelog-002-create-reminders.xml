@@ -17,6 +17,9 @@
             <column name = "remind" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
+            <column name = "remind_status" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
             <column name = "user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>

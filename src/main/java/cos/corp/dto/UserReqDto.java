@@ -1,4 +1,6 @@
 package cos.corp.dto;
 
-public class UserReqDto {
+public record UserReqDto (
+
+){
 }

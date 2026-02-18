@@ -1,7 +1,6 @@
 package cos.corp.mapper;
 
 import cos.corp.domain.entity.User;
-import cos.corp.dto.UserCreateDto;
 import cos.corp.dto.UserRespDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -18,6 +17,5 @@ public interface UserMapper {
 
     List<UserRespDto> toUserResponses(List<User> users);
 
-    User toUserCreate(UserCreateDto userCreateDto);
 
 }

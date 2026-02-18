@@ -1,4 +1,6 @@
 package cos.corp.dto;
 
-public class ReminderRespDto {
+public record ReminderRespDto(
+
+) {
 }
