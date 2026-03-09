@@ -19,7 +19,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${OAUTH2_ISSUER_URI:http://keycloak:8080/realms/reminder}
+          issuer-uri: ${OAUTH2_ISSUER_URI:http://keycloak.local:8081/realms/reminder}
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -37,26 +37,33 @@ spring:
           writetimeout: ${MAIL_WRITE_TIMEOUT_MS:5000}
 
   quartz:
-    job-store-type: jdbc
+    job-store-type: memory
     jdbc:
       initialize-schema: never
     properties:
       org:
-        quartz:
-          scheduler:
-            instanceName: ReminderScheduler
-            instanceId: AUTO
-          threadPool:
-            class: org.quartz.simpl.SimpleThreadPool
-            threadCount: ${QUARTZ_THREADS:10}
-            threadPriority: 5
-          jobStore:
-            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            tablePrefix: QRTZ_
-            isClustered: ${QUARTZ_CLUSTERED:false}
-            misfireThreshold: 60000
-            useProperties: true
+        spring:
+          quartz:
+            job-store-type: jdbc
+            jdbc:
+              initialize-schema: never
+            properties:
+              org:
+                quartz:
+                  scheduler:
+                    instanceName: ReminderScheduler
+                    instanceId: AUTO
+                  threadPool:
+                    class: org.quartz.simpl.SimpleThreadPool
+                    threadCount: 10
+                    threadPriority: 5
+                  jobStore:
+                    class: org.quartz.impl.jdbcjobstore.JobStoreTX
+                    driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+                    tablePrefix: QRTZ_
+                    isClustered: false
+                    misfireThreshold: 60000
+                    useProperties: true
   web:
     error:
       include-message: always

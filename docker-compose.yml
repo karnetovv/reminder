@@ -12,6 +12,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reminder -d reminder"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.1
@@ -20,11 +25,21 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://keycloak.local:8081
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HTTP_ENABLED: "true"
     ports:
       - "8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; echo -e 'GET / HTTP/1.1\r\nhost: 127.0.0.1\r\nConnection: close\r\n\r\n' >&3; cat <&3 | grep -q 'HTTP/'"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: reminder-app
     depends_on:
       - postgres
@@ -36,10 +51,13 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/reminder
       DB_USER: reminder
       DB_PASSWORD: reminder
-      OAUTH2_ISSUER_URI: http://keycloak:8080/realms/reminder
+      OAUTH2_ISSUER_URI: http://keycloak.local:8081/realms/reminder
       SERVER_PORT: 8080
     ports:
       - "8085:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "keycloak.local:host-gateway"
 
 volumes:
   postgres_data:
