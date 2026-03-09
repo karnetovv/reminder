@@ -1,0 +1,71 @@
+server:
+  port: 8083
+  shutdown: graceful
+  error:
+    include-message: always
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reminder
+    username: reminder
+    password: reminder
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/reminder
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  quartz:
+    job-store-type: memory
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+app:
+  timezone: UTC
+
+  reminders:
+    default-page-size: 20
+    max-page-size: 100
+
+  notification:
+    enabled: true
+    email:
+      from: ${MAIL_USERNAME:}
+      subject-prefix: "[Reminder]"
+    telegram:
+      enabled: true
+      bot-token: ${TELEGRAM_BOT_TOKEN:}
+      api-url: https://api.telegram.org
+      poll-delay-ms: 5000
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO

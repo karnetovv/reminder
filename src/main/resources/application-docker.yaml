@@ -1,0 +1,94 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/reminder}
+    username: ${DB_USER:reminder}
+    password: ${DB_PASSWORD:reminder}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:10}
+      minimum-idle: ${DB_POOL_MIN:2}
+      connection-timeout: ${DB_CONN_TIMEOUT_MS:30000}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:600000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI:http://keycloak:8080/realms/reminder}
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: ${MAIL_CONN_TIMEOUT_MS:5000}
+          timeout: ${MAIL_TIMEOUT_MS:5000}
+          writetimeout: ${MAIL_WRITE_TIMEOUT_MS:5000}
+
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ReminderScheduler
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: ${QUARTZ_THREADS:10}
+            threadPriority: 5
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
+            isClustered: ${QUARTZ_CLUSTERED:false}
+            misfireThreshold: 60000
+            useProperties: true
+  web:
+    error:
+      include-message: always
+
+app:
+  timezone: ${APP_TZ:UTC}
+
+  reminders:
+    default-page-size: ${REMINDERS_DEFAULT_PAGE_SIZE:20}
+    max-page-size: ${REMINDERS_MAX_PAGE_SIZE:100}
+
+  notification:
+    enabled: ${NOTIFY_ENABLED:true}
+    email:
+      from: ${NOTIFY_EMAIL_FROM:${MAIL_USERNAME:}}
+      subject-prefix: ${NOTIFY_EMAIL_SUBJECT_PREFIX:[Reminder]}
+    telegram:
+      enabled: ${TELEGRAM_ENABLED:true}
+      bot-token: ${TELEGRAM_BOT_TOKEN:}
+      api-url: ${TELEGRAM_API_URL:https://api.telegram.org}
+      poll-delay-ms: 5000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:INFO}

@@ -1,4 +1,14 @@
 package cos.corp.dto;
 
-public class ReminderUpdateReqDto {
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
+public record ReminderUpdateReqDto (
+        @NotNull
+        Long id,
+        String title,
+        String description,
+        LocalDateTime remind
+) {
 }
