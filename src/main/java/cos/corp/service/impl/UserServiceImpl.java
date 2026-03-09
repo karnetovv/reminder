@@ -1,11 +1,11 @@
-package cos.corp.service.Impl;
+package cos.corp.service.impl;
 
 import cos.corp.domain.entity.User;
 import cos.corp.domain.repository.UserRepository;
 import cos.corp.dto.UserUpdateDto;
+import cos.corp.exception.NotFoundException;
 import cos.corp.service.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -16,18 +16,21 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional
-    public User getInternalUserId(Authentication authentication) {
+    public User getInternalUser(Authentication authentication) {
 
         JwtAuthenticationToken jwtAuth = extractJwt(authentication);
 
         String externalId = jwtAuth.getToken().getSubject(); // sub
         if (externalId == null || externalId.isBlank()) {
-            throw new IllegalStateException("JWT does not contain 'sub' claim");
+            throw new IllegalStateException("JWT токен не содержит subject.");
         }
 
         String username = Optional.ofNullable(
@@ -61,9 +64,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateProfile(Long userId, UserUpdateDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         if (dto.email() != null) user.setEmail(dto.email());
         if (dto.telegramId()!= null) user.setTelegramId(dto.telegramId());

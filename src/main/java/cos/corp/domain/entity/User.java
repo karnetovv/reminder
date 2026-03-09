@@ -11,7 +11,6 @@ import jakarta.persistence.Table;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,13 +23,13 @@ public class User {
     @Column(name="external_id", nullable=false, unique=true, length=128)
     private String externalId;
 
-    @Column(nullable=false, unique=true, length=128)
+    @Column(nullable=false, length=128)
     private String username;
 
-    @Column(nullable=false, unique=true, length=255)
+    @Column(unique=true, length=255)
     private String email;
 
-    @Column(name="telegram_id", unique=true, length=64)
+    @Column(name="telegram_id", length=64)
     private String telegramId;
 
     @Column(name="created_at", nullable=false, updatable=false)

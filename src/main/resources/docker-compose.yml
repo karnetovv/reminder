@@ -1,18 +1,45 @@
 version: "3.9"
 
 services:
-  app:
-    build: .
-    ports:
-      - "8085:8085"
-    env_file:
-      - .env
-    depends_on:
-      - postgres
-
   postgres:
     image: postgres:15
+    container_name: reminder-postgres
     environment:
       POSTGRES_DB: reminder
       POSTGRES_USER: reminder
-      POSTGRES_PASSWORD: r2emind3r
+      POSTGRES_PASSWORD: reminder
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: reminder-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+
+  app:
+    build: .
+    container_name: reminder-app
+    depends_on:
+      - postgres
+      - keycloak
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://postgres:5432/reminder
+      DB_USER: reminder
+      DB_PASSWORD: reminder
+      OAUTH2_ISSUER_URI: http://keycloak:8080/realms/reminder
+      SERVER_PORT: 8080
+    ports:
+      - "8085:8080"
+
+volumes:
+  postgres_data:

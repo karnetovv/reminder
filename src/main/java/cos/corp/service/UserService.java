@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 
 public interface UserService {
 
-    User getInternalUserId(Authentication authentication);
+    User getInternalUser(Authentication authentication);
 
     User createInternalUser(String externalId, String username, String email);
 

@@ -1,12 +1,11 @@
 package cos.corp.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record ReminderRespDto(
     Long id,
     String title,
     String description,
-    Date reminderDate,
-    String remindStatus
+    LocalDateTime remind
 ) {
 }

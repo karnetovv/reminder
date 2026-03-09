@@ -16,6 +16,7 @@ public interface ReminderMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Reminder toEntity(ReminderCreateReqDto dto);
 
     ReminderRespDto toDto(Reminder entity);
@@ -23,5 +24,6 @@ public interface ReminderMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void updateEntityFromDto(ReminderUpdateReqDto dto, @MappingTarget Reminder entity);
 }

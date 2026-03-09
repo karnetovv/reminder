@@ -1,6 +1,9 @@
 package cos.corp.dto;
 
-public record ReminderDeleteDto(
+import jakarta.validation.constraints.NotNull;
 
+public record ReminderDeleteDto(
+        @NotNull
+        Long reminderId
 ) {
 }

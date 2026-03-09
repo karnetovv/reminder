@@ -16,10 +16,4 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="6" author="reminder">
-        <createIndex indexName="idx_reminders_status" tableName="reminders">
-            <column name="remind_status"/>
-        </createIndex>
-    </changeSet>
-
 </databaseChangeLog>
